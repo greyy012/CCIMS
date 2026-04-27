@@ -1,0 +1,91 @@
+*{
+    box-sizing: border-box;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 12px 25px;
+
+  position: fixed;
+  top: 0;
+  left: 0;   /* 🔥 ADD */
+  width: 100%;
+
+  box-sizing: border-box; /* 🔥 PREVENT OVERFLOW */
+
+  z-index: 100;
+
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/*Right side Navbar*/
+
+.navbar-right h2 {
+    margin: 0;
+    font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.logo-text {
+    display: flex;
+    align-items: center;
+    color: white;
+    gap: 8px;
+    margin: 0;
+}
+
+/*Left side Navbar*/
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.navbar-left a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    font-family: cursive;
+
+}
+
+.navbar-left a:hover {
+    text-decoration: overline;
+}
+
+/* .login-btn {
+    font-family: cursive;
+    padding: 6px 12px;
+    background: white;
+    color: black;
+    border: 1px black;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-btn:hover {
+    background: #0ee9b99c;
+    color: white;
+} */
+.login-btn {
+    padding: 8px 16px;
+    width: auto;
+    margin: 0px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    background: linear-gradient(to right, #667eea, #764ba2);
+    color: white;
+    cursor: pointer;
+}
+
+.login-btn:hover {
+    background: transparent;
+    border: 1px solid white;
+    color: white;
+}

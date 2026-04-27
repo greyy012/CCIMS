@@ -1,0 +1,68 @@
+.forgotpage {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: url(https://msu-new-2023-ec2-ubuntu-unzip.s3.ap-south-1.amazonaws.com/asset/storage/slider/techo.jpg);
+    background-size: 100% 100%;
+    background-position: center;
+
+}
+
+.forgot-p {
+    background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border-radius: 15px;
+  padding: 30px;
+  width: 320px;
+
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.forgot-p button {
+    padding: 10px 20px;
+    margin: 10px;
+    width: 100%;
+    font-family: cursive;
+    border: none;
+    border-radius: 5px;
+    background: white;
+    color: #5F80BC;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.forgot-p button:hover {
+    background: transparent;
+    border: 1px solid white;
+    color: white;
+}
+
+.forgot-p h2 {
+    text-align: center;
+    font-size: 40px;
+    color: white;
+    font-family: cursive;
+    margin-bottom: 18px;
+}
+
+label {
+    font-size: 14px;
+    font-weight: bold;
+    font-family: cursive;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 15px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-family: cursive;
+}
+

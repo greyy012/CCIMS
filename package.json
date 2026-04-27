@@ -1,0 +1,30 @@
+{
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.11.2",
+    "axios": "^1.15.2",
+    "bcrypt": "^6.0.0",
+    "concurrently": "^9.2.1",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.14.2"
+  },
+  "name": "ccim",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "both": "concurrently \"cd Backend && nodemon server.js\" \"cd Frontend && npm start\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/greyy012/CCIMS.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/greyy012/CCIMS/issues"
+  },
+  "homepage": "https://github.com/greyy012/CCIMS#readme"
+}

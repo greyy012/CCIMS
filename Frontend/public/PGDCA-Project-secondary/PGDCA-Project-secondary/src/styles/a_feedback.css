@@ -1,0 +1,80 @@
+/* CONTAINER */
+.feedback-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* GLASS BOX */
+.feedback-box {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+
+  padding: 40px;
+  width: 500px;
+  border-radius: 15px;
+
+  color: white;
+}
+
+/* TITLE */
+.feedback-box h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* TABLE */
+.feedback-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+/* HEADER */
+.feedback-table th {
+  padding: 12px;
+  background: #e2e8f0;
+  color: black;
+}
+
+/* BODY */
+.feedback-table td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+/* ROW HOVER */
+.feedback-table tr:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+/* BUTTON GROUP */
+.btn-group {
+  display: flex;
+  justify-content: center;
+}
+
+/* BUTTON */
+button {
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+
+  background: linear-gradient(to right, #6366f1, #8b5cf6);
+  color: white;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* BACK BUTTON */
+.back-btn {
+  background: #334155;
+}
+
+/* HOVER */
+button:hover {
+  transform: translateY(-2px);
+}
