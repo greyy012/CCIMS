@@ -49,7 +49,7 @@ export default function Sidebar() {
           {staffRole === "coordinator" && (
             <>
               <button onClick={() => navigate("/process")}>
-                All Complaints
+                New Complaints
               </button>
 
               <button onClick={() => navigate("/history")}>
@@ -60,16 +60,16 @@ export default function Sidebar() {
 
           {/* RESOLVER */}
           {staffRole !== "hod" && staffRole !== "coordinator" && (
-            <>
-              <button onClick={() => navigate("/all")}>
-                My Assigned Complaints
-              </button>
+  <>
+    <button onClick={() => navigate("/update")}>
+      My Assigned Complaints
+    </button>
 
-              <button onClick={() => navigate("/history")}>
-                My History
-              </button>
-            </>
-          )}
+    <button onClick={() => navigate("/history")}>
+      My History
+    </button>
+  </>
+)}
         </>
       )}
     </div>

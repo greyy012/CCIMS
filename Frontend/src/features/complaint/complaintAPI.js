@@ -20,6 +20,9 @@ export const updateStatusApi = (data) =>
 export const getHistoryApi = (params) =>
   API.get("/history", { params });
 
+export const getStaffApi = () =>
+  API.get("/staff");
+
 // 🎓 Student complaints
 export const getStudentComplaintsApi = (prn_id) =>
   API.get(`/student/complaints?prn_id=${prn_id}`);

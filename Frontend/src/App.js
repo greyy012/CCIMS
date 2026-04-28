@@ -10,6 +10,9 @@ import AssignComplaint from "./pages/AssignComplaint";
 import ProcessComplaints from "./pages/ProcessComplaints";
 import Home from "./pages/Home";
 import History from "./pages/History";
+import UpdateStatus from "./pages/UpdateStatus";
+
+
 
 
 
@@ -27,13 +30,14 @@ function App() {
         {/* STUDENT */}
         <Route path="/student" element={<StudentHome />} />
         <Route path="/complaint" element={<ComplaintForm />} />
-<Route path="/my" element={<MyComplaints />} />
+        <Route path="/my" element={<MyComplaints />} />
         {/* STAFF */}
         <Route path="/staff" element={<StaffHome />} />
         <Route path="/all" element={<AllComplaints />} />
-<Route path="/assign" element={<AssignComplaint />} />
-<Route path="/process" element={<ProcessComplaints />} />
-<Route path="/history" element={<History />} />
+        <Route path="/assign" element={<AssignComplaint />} />
+        <Route path="/process" element={<ProcessComplaints />} />
+        <Route path="/history" element={<History />} />
+        <Route path="/update" element={<UpdateStatus />} />
 
       </Routes>
     </BrowserRouter>

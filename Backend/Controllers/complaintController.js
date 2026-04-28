@@ -16,55 +16,39 @@ exports.createComplaint = (req, res) => {
   );
 };
 
-// 📊 STUDENT VIEW
-exports.getStudentComplaints = (req, res) => {
-  const { prn_id } = req.query;
-
-  db.query(
-    `SELECT c.*, s.Name AS Staff_Name, cat.Name AS Category_Name
-     FROM complaints c
-     LEFT JOIN staff_ s ON c.Staff_ID = s.Staff_ID
-     JOIN category cat ON c.Category_ID = cat.Category_ID
-     WHERE c.PRN_ID=?`,
-    [prn_id],
-    (err, result) => {
-      if (err) return res.status(500).json(err);
-      res.json(result);
-    }
-  );
-};
-
-// 📊 STAFF / HOD VIEW
+// 📊 GET COMPLAINTS
 exports.getComplaints = (req, res) => {
   let { staff_id, role } = req.query;
 
-  role = role?.toLowerCase();
+  role = (role || "").toLowerCase();
 
-  console.log("GET COMPLAINTS:", role, staff_id);
+  console.log("ROLE:", role);
 
-  // ✅ HOD → ALL
+  // ✅ HOD
   if (role === "hod") {
-    return db.query("SELECT * FROM complaints", (err, result) => {
+    db.query("SELECT * FROM complaints", (err, result) => {
       if (err) {
-        console.log("ERROR:", err);
+        console.log("HOD ERROR:", err);
         return res.status(500).json(err);
       }
-      res.json(result);
+      return res.json(result);
     });
+    return; // 🔥 VERY IMPORTANT
   }
 
-  // ✅ COORDINATOR → SAFE FILTER
+  // ✅ COORDINATOR
   if (role === "coordinator") {
-    return db.query(
+    db.query(
       "SELECT * FROM complaints WHERE Staff_ID IS NULL OR Staff_ID = ''",
       (err, result) => {
         if (err) {
-          console.log("ERROR:", err);
+          console.log("COORD ERROR:", err);
           return res.status(500).json(err);
         }
-        res.json(result);
+        return res.json(result);
       }
     );
+    return; // 🔥 VERY IMPORTANT
   }
 
   // ✅ STAFF
@@ -73,16 +57,15 @@ exports.getComplaints = (req, res) => {
     [staff_id],
     (err, result) => {
       if (err) {
-        console.log("ERROR:", err);
+        console.log("STAFF ERROR:", err);
         return res.status(500).json(err);
       }
-      res.json(result);
+      return res.json(result);
     }
   );
 };
 
-
-// 🔄 ASSIGN (Coordinator only)
+// 🔄 ASSIGN
 exports.assignComplaint = (req, res) => {
   const {
     complaint_id,
@@ -93,7 +76,6 @@ exports.assignComplaint = (req, res) => {
     assigned_by_name
   } = req.body;
 
-  // ✅ ROLE CHECK (PUT HERE)
   if (role?.toLowerCase() !== "coordinator") {
     return res.status(403).json({ message: "Only coordinator can assign ❌" });
   }
@@ -118,31 +100,38 @@ exports.assignComplaint = (req, res) => {
   );
 };
 
-// 🔄 UPDATE STATUS
-exports.updateStatus = (req, res) => {
-  const { complaint_id, status, role } = req.body;
+// 📊 GET STAFF LIST (NEW)
+exports.getAllStaff = (req, res) => {
+  db.query(
+    `SELECT Staff_ID, Name 
+     FROM staff_ 
+     WHERE LOWER(Role) NOT IN ('coordinator', 'hod')`,
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      res.json(result);
+    }
+  );
+};
 
-  if (role !== "resolver" && role !== "coordinator") {
-    return res.status(403).json({ message: "Not allowed ❌" });
-  }
+exports.updateStatus = (req, res) => {
+  const { complaint_id, status } = req.body;
 
   db.query(
     `UPDATE complaints SET Status=? WHERE Complaint_ID=?`,
     [status, complaint_id],
     (err) => {
-      if (err) return res.status(500).json(err);
-      res.json({ message: "Updated ✅" });
+      if (err) {
+        console.log("STATUS ERROR:", err);
+        return res.status(500).json(err);
+      }
+
+      res.json({ message: "Status updated ✅" });
     }
   );
 };
-
-// 📜 HISTORY
 exports.getHistory = (req, res) => {
   let { staff_id, role } = req.query;
-
   role = role?.toLowerCase();
-
-  console.log("GET HISTORY:", role, staff_id);
 
   let query = "";
   let params = [];
@@ -159,7 +148,25 @@ exports.getHistory = (req, res) => {
       console.log("HISTORY ERROR:", err);
       return res.status(500).json(err);
     }
-
     res.json(result);
   });
+};
+exports.getStudentComplaints = (req, res) => {
+  const { prn_id } = req.query;
+
+  db.query(
+    `SELECT c.*, s.Name AS Staff_Name, cat.Name AS Category_Name
+     FROM complaints c
+     LEFT JOIN staff_ s ON c.Staff_ID = s.Staff_ID
+     JOIN category cat ON c.Category_ID = cat.Category_ID
+     WHERE c.PRN_ID=?`,
+    [prn_id],
+    (err, result) => {
+      if (err) {
+        console.log("STUDENT ERROR:", err);
+        return res.status(500).json(err);
+      }
+      res.json(result);
+    }
+  );
 };

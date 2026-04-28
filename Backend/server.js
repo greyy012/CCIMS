@@ -1,27 +1,28 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-const authRoutes = require("./routes/authRoutes");
-const complaintRoutes = require("./routes/complaintRoutes");
-
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.use("/api", require("./routes/authRoutes"));
-app.use("/api", require("./routes/complaintRoutes"));
-app.use("/api", require("./routes/staffRoutes"));
-app.use("/api", require("./routes/adminRoutes"));
-app.use("/api", require("./routes/categoryRoutes"));
-app.use("/api", require("./routes/messageRoute"));
+// ✅ Import routes ONCE
+const authRoutes = require("./routes/authRoutes");
+const complaintRoutes = require("./routes/complaintRoutes");
+const staffRoutes = require("./routes/staffRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
+const messageRoute = require("./routes/messageRoute");
 
-
-app.use("/api", complaintRoutes);
-
-
+// ✅ Use routes ONCE
 app.use("/api", authRoutes);
+app.use("/api", complaintRoutes);
+app.use("/api", staffRoutes);
+app.use("/api", adminRoutes);
+app.use("/api", categoryRoutes);
+app.use("/api", messageRoute);
+
 app.listen(5000, () => {
   console.log("Server running 🚀");
 });

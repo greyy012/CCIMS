@@ -9,37 +9,52 @@ export default function AssignComplaint() {
   const [data, setData] = useState([]);
   const [staffList, setStaffList] = useState([]);
 
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user")) || {};
 
   useEffect(() => {
     load();
   }, []);
 
   const load = async () => {
-    const res = await getComplaintsApi({
-      role: "coordinator",
-    });
+    try {
+      const res = await getComplaintsApi({
+        role: user.staffRole || "coordinator",
+      });
 
-    setData(res.data);
+      setData(res.data || []);
 
-    // dummy staff list (replace with API later)
-    setStaffList([
-      { id: 201, name: "Rahul" },
-      { id: 202, name: "Amit" },
-    ]);
+      // TEMP staff (replace later with API)
+      setStaffList([
+        { id: 201, name: "Rahul" },
+        { id: 202, name: "Amit" },
+      ]);
+
+    } catch (err) {
+      console.log("LOAD ERROR:", err);
+      setData([]);
+    }
   };
 
-  const assign = async (complaintId, staffId, staffName) => {
-    await assignComplaintApi({
-      complaint_id: complaintId,
-      staff_id: staffId,
-      staff_name: staffName,
-      role: "coordinator",
-      assigned_by: user.id,
-    });
+  const assign = async (complaintId, staff) => {
+    try {
+      if (!staff) return; // safety
 
-    alert("Assigned ✅");
-    load();
+      await assignComplaintApi({
+        complaint_id: complaintId,
+        staff_id: staff.id,
+        staff_name: staff.name,
+        role: user.staffRole || "coordinator",
+        assigned_by: user.id,
+        assigned_by_name: user.name, // 🔥 IMPORTANT
+      });
+
+      alert("Assigned ✅");
+      load();
+
+    } catch (err) {
+      console.log("ASSIGN ERROR:", err);
+      alert("Assign failed ❌");
+    }
   };
 
   return (
@@ -47,25 +62,33 @@ export default function AssignComplaint() {
       <div className="glass-card">
         <h2>Assign Complaints</h2>
 
-        {data.map((c) => (
-          <div key={c.Complaint_ID}>
-            <p>{c.Description}</p>
+        {data.length === 0 ? (
+          <p>No new complaints</p>
+        ) : (
+          data.map((c) => (
+            <div key={c.Complaint_ID} style={{ marginBottom: "15px" }}>
+              <p><b>{c.Description}</b></p>
 
-            <select
-              onChange={(e) => {
-                const s = staffList.find(
-                  (x) => x.id == e.target.value
-                );
-                assign(c.Complaint_ID, s.id, s.name);
-              }}
-            >
-              <option>Select Staff</option>
-              {staffList.map((s) => (
-                <option value={s.id}>{s.name}</option>
-              ))}
-            </select>
-          </div>
-        ))}
+              <select
+                defaultValue=""
+                onChange={(e) => {
+                  const selected = staffList.find(
+                    (x) => x.id == e.target.value
+                  );
+                  assign(c.Complaint_ID, selected);
+                }}
+              >
+                <option value="">Select Staff</option>
+
+                {staffList.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))
+        )}
       </div>
     </Layout>
   );
