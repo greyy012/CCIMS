@@ -11,6 +11,8 @@ import ProcessComplaints from "./pages/ProcessComplaints";
 import Home from "./pages/Home";
 import History from "./pages/History";
 import UpdateStatus from "./pages/UpdateStatus";
+import Reports from "./pages/Reports";
+
 
 
 
@@ -38,6 +40,8 @@ function App() {
         <Route path="/process" element={<ProcessComplaints />} />
         <Route path="/history" element={<History />} />
         <Route path="/update" element={<UpdateStatus />} />
+        <Route path="/reports" element={<Reports />} />
+
 
       </Routes>
     </BrowserRouter>

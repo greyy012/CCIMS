@@ -66,6 +66,49 @@ exports.getComplaints = (req, res) => {
 };
 
 // 🔄 ASSIGN
+// exports.assignComplaint = (req, res) => {
+//   const {
+//     complaint_id,
+//     staff_id,
+//     staff_name,
+//     role,
+//     assigned_by,
+//     assigned_by_name
+//   } = req.body;
+
+//   if (role?.toLowerCase() !== "coordinator") {
+//     return res.status(403).json({ message: "Only coordinator can assign ❌" });
+//   }
+
+  // db.query(
+    // `UPDATE complaints 
+    //  SET Staff_ID=?, 
+    //      Staff_Name=?, 
+    //      Assigned_By=?, 
+    //      Assigned_By_Name=?, 
+    //      Status='In Progress'
+    //  WHERE Complaint_ID=?`,
+    // [staff_id, staff_name, assigned_by, assigned_by_name, complaint_id],
+//     db.query(
+//   `UPDATE complaints 
+//    SET Staff_ID=?, 
+//        Staff_Name=?, 
+//        Assigned_By=?, 
+//        Assigned_By_Name=?, 
+//        Assigned_Time = NOW(),   // ✅ ADD HERE
+//        Status='In Progress'
+//    WHERE Complaint_ID=?`,
+//   [staff_id, staff_name, assigned_by, assigned_by_name, complaint_id],
+//     (err) => {
+//       if (err) {
+//         console.log("ASSIGN ERROR:", err);
+//         return res.status(500).json(err);
+//       }
+
+//       res.json({ message: "Assigned successfully ✅" });
+//     }
+//   );
+// };
 exports.assignComplaint = (req, res) => {
   const {
     complaint_id,
@@ -86,6 +129,7 @@ exports.assignComplaint = (req, res) => {
          Staff_Name=?, 
          Assigned_By=?, 
          Assigned_By_Name=?, 
+         Assigned_Time = NOW(),
          Status='In Progress'
      WHERE Complaint_ID=?`,
     [staff_id, staff_name, assigned_by, assigned_by_name, complaint_id],
@@ -99,7 +143,6 @@ exports.assignComplaint = (req, res) => {
     }
   );
 };
-
 // 📊 GET STAFF LIST (NEW)
 exports.getAllStaff = (req, res) => {
   db.query(
@@ -113,34 +156,87 @@ exports.getAllStaff = (req, res) => {
   );
 };
 
+// exports.updateStatus = (req, res) => {
+//   const { complaint_id, status } = req.body;
+
+//   db.query(
+//     `UPDATE complaints SET Status=? WHERE Complaint_ID=?`,
+//     [status, complaint_id],
+//     (err) => {
+//       if (err) {
+//         console.log("STATUS ERROR:", err);
+//         return res.status(500).json(err);
+//       }
+
+//       res.json({ message: "Status updated ✅" });
+//     }
+//   );
+// };
 exports.updateStatus = (req, res) => {
   const { complaint_id, status } = req.body;
-
-  db.query(
-    `UPDATE complaints SET Status=? WHERE Complaint_ID=?`,
-    [status, complaint_id],
-    (err) => {
-      if (err) {
-        console.log("STATUS ERROR:", err);
-        return res.status(500).json(err);
-      }
-
-      res.json({ message: "Status updated ✅" });
-    }
-  );
-};
-exports.getHistory = (req, res) => {
-  let { staff_id, role } = req.query;
-  role = role?.toLowerCase();
 
   let query = "";
   let params = [];
 
-  if (role === "hod" || role === "coordinator") {
-    query = "SELECT * FROM complaints ORDER BY Complaint_ID DESC";
+  if (status === "Resolved") {
+    query = `
+      UPDATE complaints 
+      SET Status=?, Resolved_Time = NOW()
+      WHERE Complaint_ID=?`;
+    params = [status, complaint_id];
   } else {
-    query = "SELECT * FROM complaints WHERE Staff_ID=?";
-    params = [staff_id];
+    query = `
+      UPDATE complaints 
+      SET Status=? 
+      WHERE Complaint_ID=?`;
+    params = [status, complaint_id];
+  }
+
+  db.query(query, params, (err) => {
+    if (err) {
+      console.log("STATUS ERROR:", err);
+      return res.status(500).json(err);
+    }
+    res.json({ message: "Status updated ✅" });
+  });
+};
+// exports.getHistory = (req, res) => {
+//   let { staff_id, role } = req.query;
+//   role = role?.toLowerCase();
+
+//   let query = "";
+//   let params = [];
+
+//   if (role === "hod" || role === "coordinator") {
+//     query = "SELECT * FROM complaints ORDER BY Complaint_ID DESC";
+//   } else {
+//     query = "SELECT * FROM complaints WHERE Staff_ID=?";
+//     params = [staff_id];
+//   }
+
+//   db.query(query, params, (err, result) => {
+//     if (err) {
+//       console.log("HISTORY ERROR:", err);
+//       return res.status(500).json(err);
+//     }
+//     res.json(result);
+//   });
+// };
+exports.getHistory = (req, res) => {
+  let { staff_id, role } = req.query;
+  role = role?.toLowerCase();
+
+  let query = `
+    SELECT *,
+    TIMESTAMPDIFF(HOUR, Assigned_Time, Resolved_Time) AS resolution_hours
+    FROM complaints
+  `;
+
+  let params = [];
+
+  if (role !== "hod" && role !== "coordinator") {
+    query += " WHERE Staff_ID=?";
+    params.push(staff_id);
   }
 
   db.query(query, params, (err, result) => {

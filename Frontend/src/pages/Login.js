@@ -54,10 +54,20 @@ const handleLogin = async () => {
 
       {/* ROLE TOGGLE */}
       <div className="toggle">
-        <button onClick={() => setRole("student")}>Student</button>
-        <button onClick={() => setRole("staff")}>Staff</button>
-      </div>
+  <button
+    className={role === "student" ? "active" : ""}
+    onClick={() => setRole("student")}
+  >
+    🎓 Student
+  </button>
 
+  <button
+    className={role === "staff" ? "active" : ""}
+    onClick={() => setRole("staff")}
+  >
+    🧑‍💼 Staff
+  </button>
+</div>
       <input
         value={identifier}
         placeholder={role === "student" ? "PRN Number" : "Staff ID"}

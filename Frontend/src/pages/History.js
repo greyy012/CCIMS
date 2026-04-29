@@ -58,18 +58,11 @@ export default function History() {
                   <td>{c.Complaint_ID}</td>
                   <td>{c.Description}</td>
 
-                  <td
-                    style={{
-                      color:
-                        c.Status === "Resolved"
-                          ? "green"
-                          : c.Status === "In Progress"
-                          ? "orange"
-                          : "red",
-                    }}
-                  >
-                    {c.Status}
-                  </td>
+                 <td>
+  <span className={`status ${c.Status?.toLowerCase().replace(" ", "-")}`}>
+    {c.Status}
+  </span>
+</td>
 
                   <td>{c.Staff_Name || "Not Assigned"}</td>
                   <td>{c.Assigned_By_Name || "-"}</td>

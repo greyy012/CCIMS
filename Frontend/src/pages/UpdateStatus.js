@@ -67,18 +67,11 @@ export default function UpdateStatus() {
                   <td>{c.Complaint_ID}</td>
                   <td>{c.Description}</td>
 
-                  <td
-                    style={{
-                      color:
-                        c.Status === "Resolved"
-                          ? "green"
-                          : c.Status === "In Progress"
-                          ? "orange"
-                          : "red",
-                    }}
-                  >
-                    {c.Status}
-                  </td>
+                  <td>
+  <span className={`status ${c.Status?.toLowerCase().replace(" ", "-")}`}>
+    {c.Status}
+  </span>
+</td>
 
                   <td>
                     {c.Status !== "Resolved" && (

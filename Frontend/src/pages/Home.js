@@ -16,29 +16,37 @@ export default function Home() {
       {/* CENTER CONTENT */}
       <div className="page">
         <div className="glass-card center-text">
-          <h1>Complaint & Issue Management System</h1>
 
-          <p>
-            Department of Applied Mathematics, Faculty of Technology and Engineering,
-            The Maharaja Sayajirao University of Baroda.
-          </p>
+  <h1>🚀 Complaint Management System</h1>
 
-          <p style={{ marginTop: "10px" }}>
-            This system allows students to register complaints and track their status.
-            It ensures proper communication between students and staff for faster and
-            transparent resolution of issues.
-          </p>
+  <p>
+    A smart platform for managing student complaints with real-time tracking,
+    staff assignment, and performance analytics.
+  </p>
 
-          {/* LOGIN BUTTON */}
-          <div style={{ marginTop: "25px" }}>
-            <button
-              className="primary"
-              onClick={() => navigate("/login")}
-            >
-              Login to Continue
-            </button>
-          </div>
-        </div>
+  <div className="card-container">
+
+    <div className="card">
+      📌 Easy Complaint Registration
+    </div>
+
+    <div className="card">
+      🔄 Real-time Status Tracking
+    </div>
+
+    <div className="card">
+      📊 Analytics & Reports
+    </div>
+
+  </div>
+
+  <div style={{ marginTop: "25px" }}>
+    <button className="primary" onClick={() => navigate("/login")}>
+      Get Started →
+    </button>
+  </div>
+
+</div>
       </div>
 
     </div>
