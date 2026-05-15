@@ -3,6 +3,9 @@ import axios from "axios";
 const API = axios.create({
   baseURL: "http://localhost:5000/api",
 });
+export const getCategoriesApi = () => {
+  return axios.get("/api/categories");
+};
 
 // OPTIONAL: add token later if needed
 // API.interceptors.request.use((req) => {

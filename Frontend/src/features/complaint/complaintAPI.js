@@ -1,4 +1,5 @@
 import API from "../../api/api"; 
+import axios from "axios";
 
 // 📝 Student create complaint
 export const createComplaintApi = (data) =>
@@ -8,21 +9,25 @@ export const createComplaintApi = (data) =>
 export const getComplaintsApi = (params) =>
   API.get("/complaints", { params });
 
-// 📌 Assign complaint (Coordinator)
+
 export const assignComplaintApi = (data) =>
   API.put("/assign", data);
 
-// 🔄 Update status
+
 export const updateStatusApi = (data) =>
   API.put("/status", data);
 
-// 📜 History
+
 export const getHistoryApi = (params) =>
   API.get("/history", { params });
 
 export const getStaffApi = () =>
   API.get("/staff");
 
-// 🎓 Student complaints
+
 export const getStudentComplaintsApi = (prn_id) =>
   API.get(`/student/complaints?prn_id=${prn_id}`);
+
+export const getCategoriesApi = () => {
+  return API.get("/categories"); 
+};

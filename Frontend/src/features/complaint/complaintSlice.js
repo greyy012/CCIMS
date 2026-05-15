@@ -20,11 +20,11 @@ export const fetchComplaints = createAsyncThunk(
   "complaint/fetch",
   async ({ id, role }) => {
     if (role === "student") {
-      // ✅ student API
+     
       const res = await getStudentComplaintsApi(id);
       return res.data;
     } else {
-      // ✅ staff API (same for hod/coordinator/resolver)
+    
       const res = await getComplaintsApi({
         staff_id: id,
         role: role,

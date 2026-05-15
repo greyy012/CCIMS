@@ -23,6 +23,9 @@ app.use("/api", adminRoutes);
 app.use("/api", categoryRoutes);
 app.use("/api", messageRoute);
 
+
+
+
 app.listen(5000, () => {
   console.log("Server running 🚀");
 });

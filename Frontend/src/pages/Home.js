@@ -17,7 +17,7 @@ export default function Home() {
       <div className="page">
         <div className="glass-card center-text">
 
-  <h1>🚀 Complaint Management System</h1>
+  <h1>Complaint Management System</h1>
 
   <p>
     A smart platform for managing student complaints with real-time tracking,

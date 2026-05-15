@@ -52,7 +52,7 @@ export default function Reports() {
               <th>Date</th>
               <th>Assigned Time</th>
               <th>Resolved Time</th>
-              <th>Resolution (hrs)</th>
+              {/* <th>Resolution (hrs)</th> */}
             </tr>
           </thead>
 
@@ -98,7 +98,7 @@ export default function Reports() {
                   <td>{date}</td>
                   <td>{assignedTime}</td>
                   <td>{resolvedTime}</td>
-                  <td>{hours}</td>
+                  {/* <td>{hours}</td> */}
                 </tr>
               );
             })}

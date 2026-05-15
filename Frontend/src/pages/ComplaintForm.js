@@ -1,54 +1,66 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { createComplaint } from "../features/complaint/complaintSlice";
+import { getCategoriesApi } from "../features/complaint/complaintAPI";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 
 export default function ComplaintForm() {
   const [form, setForm] = useState({
-    type: "",
+    category_id: "",
     branch: "",
     description: "",
   });
 
+  const [categories, setCategories] = useState([]);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // ✅ GET LOGGED-IN USER
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // ✅ CATEGORY MAPPING
-  const categoryMap = {
-    Technical: 1,
-    Academic: 2,
-    Mess: 3,
+  // 🔥 LOAD CATEGORIES FROM DB
+  useEffect(() => {
+    loadCategories();
+  }, []);
+
+  const loadCategories = async () => {
+    try {
+      const res = await getCategoriesApi();
+
+      console.log("CATEGORIES:", res.data); 
+
+     
+      setCategories(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.log("CATEGORY ERROR:", err);
+      setCategories([]);
+    }
   };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // validation
-    if (!form.type || !form.branch || !form.description) {
+    if (!form.category_id || !form.branch || !form.description) {
       alert("All fields required ❌");
       return;
     }
 
-    // user check
     if (!user || !user.id) {
       alert("User not logged in ❌");
       return;
     }
 
-    // dispatch API
     dispatch(
       createComplaint({
         description: form.description,
-        category_id: categoryMap[form.type], // ✅ dynamic category
-        prn_id: user.id,                     // ✅ dynamic PRN
+        category_id: form.category_id, 
+        prn_id: user.id,
       })
     );
 
-    alert("Complaint Submitted ✅");
+    alert("Complaint Submitted ");
     navigate("/student");
   };
 
@@ -58,17 +70,28 @@ export default function ComplaintForm() {
         <h2>File a Complaint</h2>
 
         <form onSubmit={handleSubmit}>
-          {/* TYPE */}
+
+          
           <select
-            value={form.type}
+            value={form.category_id}
             onChange={(e) =>
-              setForm({ ...form, type: e.target.value })
+              setForm({ ...form, category_id: e.target.value })
             }
           >
-            <option value="">Select Type</option>
-            <option>Technical</option>
-            <option>Academic</option>
-            <option>Mess</option>
+            <option value="">Select Category</option>
+
+            {categories.length > 0 ? (
+              categories.map((cat) => (
+                <option
+                  key={cat.Category_ID || cat.category_id}
+                  value={cat.Category_ID || cat.category_id}
+                >
+                  {cat.Name || cat.name}
+                </option>
+              ))
+            ) : (
+              <option disabled>Loading...</option>
+            )}
           </select>
 
           {/* BRANCH */}
@@ -78,10 +101,10 @@ export default function ComplaintForm() {
               setForm({ ...form, branch: e.target.value })
             }
           >
-            <option value="">Select Branch</option>
-            <option>MCA</option>
-            <option>BCA</option>
+            <option value="">Select Course</option>
             <option>MSC</option>
+            <option>PGDCA</option>
+            <option>Financial Mathematics</option>
           </select>
 
           {/* DESCRIPTION */}
@@ -106,6 +129,7 @@ export default function ComplaintForm() {
               Back
             </button>
           </div>
+
         </form>
       </div>
     </Layout>

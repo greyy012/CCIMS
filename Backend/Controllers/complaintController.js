@@ -1,6 +1,6 @@
 const db = require("../db");
 
-// 📝 CREATE (Student)
+
 exports.createComplaint = (req, res) => {
   const { description, category_id, prn_id } = req.body;
 
@@ -16,7 +16,7 @@ exports.createComplaint = (req, res) => {
   );
 };
 
-// 📊 GET COMPLAINTS
+
 exports.getComplaints = (req, res) => {
   let { staff_id, role } = req.query;
 
@@ -24,7 +24,7 @@ exports.getComplaints = (req, res) => {
 
   console.log("ROLE:", role);
 
-  // ✅ HOD
+
   if (role === "hod") {
     db.query("SELECT * FROM complaints", (err, result) => {
       if (err) {
@@ -36,7 +36,7 @@ exports.getComplaints = (req, res) => {
     return; // 🔥 VERY IMPORTANT
   }
 
-  // ✅ COORDINATOR
+ 
   if (role === "coordinator") {
     db.query(
       "SELECT * FROM complaints WHERE Staff_ID IS NULL OR Staff_ID = ''",
@@ -48,10 +48,9 @@ exports.getComplaints = (req, res) => {
         return res.json(result);
       }
     );
-    return; // 🔥 VERY IMPORTANT
+    return; 
   }
 
-  // ✅ STAFF
   db.query(
     "SELECT * FROM complaints WHERE Staff_ID=?",
     [staff_id],
@@ -65,7 +64,7 @@ exports.getComplaints = (req, res) => {
   );
 };
 
-// 🔄 ASSIGN
+
 // exports.assignComplaint = (req, res) => {
 //   const {
 //     complaint_id,
@@ -105,7 +104,7 @@ exports.getComplaints = (req, res) => {
 //         return res.status(500).json(err);
 //       }
 
-//       res.json({ message: "Assigned successfully ✅" });
+//       res.json({ message: "Assigned successfully " });
 //     }
 //   );
 // };
@@ -143,7 +142,7 @@ exports.assignComplaint = (req, res) => {
     }
   );
 };
-// 📊 GET STAFF LIST (NEW)
+
 exports.getAllStaff = (req, res) => {
   db.query(
     `SELECT Staff_ID, Name 
@@ -155,7 +154,13 @@ exports.getAllStaff = (req, res) => {
     }
   );
 };
-
+// controllers/categoryController.js
+exports.getCategories = (req, res) => {
+  db.query("SELECT Category_ID, Name FROM category", (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
+};
 // exports.updateStatus = (req, res) => {
 //   const { complaint_id, status } = req.body;
 
@@ -168,7 +173,7 @@ exports.getAllStaff = (req, res) => {
 //         return res.status(500).json(err);
 //       }
 
-//       res.json({ message: "Status updated ✅" });
+//       res.json({ message: "Status updated " });
 //     }
 //   );
 // };
@@ -197,7 +202,7 @@ exports.updateStatus = (req, res) => {
       console.log("STATUS ERROR:", err);
       return res.status(500).json(err);
     }
-    res.json({ message: "Status updated ✅" });
+    res.json({ message: "Status updated " });
   });
 };
 // exports.getHistory = (req, res) => {
