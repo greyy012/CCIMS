@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import {
   getComplaintsApi,
   assignComplaintApi,
-  getStaffApi
+  getStaffApi,
+  deleteComplaintApi,
 } from "../features/complaint/complaintAPI";
 import Layout from "../components/Layout";
 
@@ -34,6 +35,23 @@ const load = async () => {
     alert("Failed to load ❌");
   }
 };
+
+  const removeInvalid = async (complaintId) => {
+    if (!window.confirm("Delete this invalid complaint permanently?")) {
+      return;
+    }
+
+    try {
+      await deleteComplaintApi({
+        complaint_id: complaintId,
+        role: user.staffRole,
+      });
+      alert("Complaint deleted ✅");
+      load();
+    } catch (err) {
+      alert(err.response?.data?.message || "Delete failed ❌");
+    }
+  };
 
   const assign = async (complaintId, staff) => {
     try {
@@ -71,6 +89,7 @@ const load = async () => {
                 <th>Description</th>
                 <th>Status</th>
                 <th>Process</th>
+                <th>Delete</th>
               </tr>
             </thead>
 
@@ -85,7 +104,6 @@ const load = async () => {
                   </td>
 
                   <td>
-                    {/* 🔘 PROCESS BUTTON */}
                     {activeRow !== c.Complaint_ID ? (
                       <button
                         onClick={() => setActiveRow(c.Complaint_ID)}
@@ -93,7 +111,6 @@ const load = async () => {
                         Process
                       </button>
                     ) : (
-                      /* 🔽 DROPDOWN AFTER CLICK */
                       <select
                         defaultValue=""
                         onChange={(e) => {
@@ -112,6 +129,15 @@ const load = async () => {
                         ))}
                       </select>
                     )}
+                  </td>
+
+                  <td>
+                    <button
+                      className="btn-danger"
+                      onClick={() => removeInvalid(c.Complaint_ID)}
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}

@@ -1,6 +1,9 @@
 import Layout from "../components/Layout";
 import { useEffect, useState } from "react";
-import { getStudentComplaintsApi } from "../features/complaint/complaintAPI";
+import {
+  getStudentComplaintsApi,
+  withdrawComplaintApi,
+} from "../features/complaint/complaintAPI";
 
 export default function MyComplaints() {
   const [data, setData] = useState([]);
@@ -26,6 +29,27 @@ export default function MyComplaints() {
     loadData();
   }, []);
 
+  const withdraw = async (complaintId) => {
+    if (!window.confirm("Withdraw this complaint? This cannot be undone.")) {
+      return;
+    }
+
+    try {
+      await withdrawComplaintApi({
+        complaint_id: complaintId,
+        prn_id: user.id,
+        role: "student",
+      });
+      alert("Complaint withdrawn ✅");
+      loadData();
+    } catch (err) {
+      alert(err.response?.data?.message || "Withdraw failed ❌");
+    }
+  };
+
+  const canWithdraw = (c) =>
+    c.Status === "Pending" && !c.Staff_ID;
+
   return (
     <Layout>
       <div className="glass-card">
@@ -41,6 +65,7 @@ export default function MyComplaints() {
                 <th>Description</th>
                 <th>Status</th>
                 <th>Assigned To</th>
+                <th>Action</th>
               </tr>
             </thead>
 
@@ -51,12 +76,27 @@ export default function MyComplaints() {
                   <td>{c.Description}</td>
 
                   <td>
-  <span className={`status ${c.Status?.toLowerCase().replace(" ", "-")}`}>
-    {c.Status}
-  </span>
-</td>
+                    <span
+                      className={`status ${c.Status?.toLowerCase().replace(/\s+/g, "-")}`}
+                    >
+                      {c.Status}
+                    </span>
+                  </td>
 
                   <td>{c.Staff_Name || "Not Assigned"}</td>
+
+                  <td>
+                    {canWithdraw(c) ? (
+                      <button
+                        className="btn-danger"
+                        onClick={() => withdraw(c.Complaint_ID)}
+                      >
+                        Withdraw
+                      </button>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

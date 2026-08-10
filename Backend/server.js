@@ -14,14 +14,15 @@ const staffRoutes = require("./routes/staffRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const messageRoute = require("./routes/messageRoute");
+const feedbackRoutes = require("./routes/feedbackRoutes");
 
-// ✅ Use routes ONCE
 app.use("/api", authRoutes);
 app.use("/api", complaintRoutes);
 app.use("/api", staffRoutes);
 app.use("/api", adminRoutes);
 app.use("/api", categoryRoutes);
 app.use("/api", messageRoute);
+app.use("/api", feedbackRoutes);
 
 
 

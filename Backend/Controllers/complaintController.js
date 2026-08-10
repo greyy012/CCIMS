@@ -39,7 +39,9 @@ exports.getComplaints = (req, res) => {
  
   if (role === "coordinator") {
     db.query(
-      "SELECT * FROM complaints WHERE Staff_ID IS NULL OR Staff_ID = ''",
+      `SELECT * FROM complaints 
+       WHERE (Staff_ID IS NULL OR Staff_ID = '')
+       AND Status NOT IN ('Withdrawn', 'Deleted')`,
       (err, result) => {
         if (err) {
           console.log("COORD ERROR:", err);
@@ -252,6 +254,136 @@ exports.getHistory = (req, res) => {
     res.json(result);
   });
 };
+exports.withdrawComplaint = (req, res) => {
+  const { complaint_id, prn_id, role } = req.body;
+
+  if (role?.toLowerCase() !== "student") {
+    return res.status(403).json({ message: "Only students can withdraw complaints ❌" });
+  }
+
+  db.query(
+    `SELECT * FROM complaints 
+     WHERE Complaint_ID=? AND PRN_ID=?`,
+    [complaint_id, prn_id],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      if (!result || result.length === 0) {
+        return res.status(404).json({ message: "Complaint not found ❌" });
+      }
+
+      const complaint = result[0];
+      if (complaint.Status !== "Pending") {
+        return res.status(400).json({
+          message: "Only pending complaints can be withdrawn ❌",
+        });
+      }
+      if (complaint.Staff_ID) {
+        return res.status(400).json({
+          message: "Cannot withdraw — complaint is already being processed ❌",
+        });
+      }
+
+      db.query(
+        `UPDATE complaints SET Status='Withdrawn' WHERE Complaint_ID=?`,
+        [complaint_id],
+        (updateErr) => {
+          if (updateErr) return res.status(500).json(updateErr);
+          res.json({ message: "Complaint withdrawn successfully ✅" });
+        }
+      );
+    }
+  );
+};
+
+exports.deleteComplaint = (req, res) => {
+  const { complaint_id, role } = req.body;
+
+  if (role?.toLowerCase() !== "coordinator") {
+    return res.status(403).json({ message: "Only coordinator can delete invalid complaints ❌" });
+  }
+
+  db.query(
+    `SELECT * FROM complaints WHERE Complaint_ID=?`,
+    [complaint_id],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      if (!result || result.length === 0) {
+        return res.status(404).json({ message: "Complaint not found ❌" });
+      }
+
+      const complaint = result[0];
+      if (complaint.Status === "Resolved") {
+        return res.status(400).json({
+          message: "Cannot delete a resolved complaint ❌",
+        });
+      }
+
+      db.query(
+        `DELETE FROM complaints WHERE Complaint_ID=?`,
+        [complaint_id],
+        (deleteErr) => {
+          if (deleteErr) return res.status(500).json(deleteErr);
+          res.json({ message: "Invalid complaint deleted ✅" });
+        }
+      );
+    }
+  );
+};
+
+exports.getComplaintStats = (req, res) => {
+  const { role } = req.query;
+  const r = role?.toLowerCase();
+  if (r !== "hod" && r !== "admin") {
+    return res.status(403).json({ message: "Not authorized" });
+  }
+
+  db.query(
+    `SELECT Status, COUNT(*) AS count FROM complaints GROUP BY Status`,
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      res.json(result);
+    }
+  );
+};
+
+exports.getCategoryStats = (req, res) => {
+  const { role } = req.query;
+  const r = role?.toLowerCase();
+  if (r !== "hod" && r !== "admin") {
+    return res.status(403).json({ message: "Not authorized" });
+  }
+
+  db.query(
+    `SELECT cat.Name AS Category_Name, COUNT(c.Complaint_ID) AS count
+     FROM category cat
+     LEFT JOIN complaints c ON cat.Category_ID = c.Category_ID
+     GROUP BY cat.Category_ID, cat.Name
+     ORDER BY count DESC`,
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      res.json(result);
+    }
+  );
+};
+
+exports.getStudentDashboard = (req, res) => {
+  const { prn_id } = req.query;
+  db.query(
+    `SELECT
+      COUNT(*) AS total,
+      SUM(Status='Pending') AS pending,
+      SUM(Status='In Progress') AS in_progress,
+      SUM(Status='Resolved') AS resolved,
+      SUM(Status='Withdrawn') AS withdrawn
+     FROM complaints WHERE PRN_ID=?`,
+    [prn_id],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      res.json(result[0]);
+    }
+  );
+};
+
 exports.getStudentComplaints = (req, res) => {
   const { prn_id } = req.query;
 

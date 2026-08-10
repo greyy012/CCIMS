@@ -1,46 +1,44 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { loginApi } from "./authAPI";
+import API from "../../api/api";
 
-// LOGIN
 export const loginUser = createAsyncThunk(
   "auth/login",
-  async (data, thunkAPI) => {
+  async (data, { rejectWithValue }) => {
     try {
-      const res = await loginApi(data);   // ✅ FIX
-      return res.data;                    // ✅ IMPORTANT
+      const res = await API.post("/login", data);
+      if (res.data?.user) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+      }
+      return res.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response?.data);
+      return rejectWithValue(
+        err.response?.data || { error: "Login failed. Is the server running on port 5000?" }
+      );
     }
   }
 );
 
 const authSlice = createSlice({
   name: "auth",
+
   initialState: {
-    user: null,
-    loading: false,
-    error: null
+    user: JSON.parse(localStorage.getItem("user")) || null,
   },
+
   reducers: {
     logout: (state) => {
       state.user = null;
-    }
+      localStorage.removeItem("user");
+    },
   },
+
   extraReducers: (builder) => {
-    builder
-      .addCase(loginUser.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload.user;  // ✅ now works
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload?.error;
-      });
-  }
+    builder.addCase(loginUser.fulfilled, (state, action) => {
+      state.user = action.payload.user;
+    });
+  },
 });
 
 export const { logout } = authSlice.actions;
+
 export default authSlice.reducer;
